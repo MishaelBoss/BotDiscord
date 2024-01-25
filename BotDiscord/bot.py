@@ -4,29 +4,15 @@ from disnake.ext import commands
 
 #command_prefix=commands.when_mentioned
 
-bot = commands.Bot(command_prefix="/", help_command=None, intents=disnake.Intents.all(), test_guilds=[1177680395702108260])
+bot = commands.Bot(command_prefix="/", help_command=None, intents=disnake.Intents.all(), test_guilds=[YOU CLIENT ID])
 
 
-#запрещенные слова
-CENSORED_WORDS = ["test", "test"]
+CENSORED_WORDS = ["бла", "бла"]
 
 
-class ban(disnake.ui.View):
-    def  __init__(self):
-        super().__init__(timeout=10.0)
-        self.value = Optional[bool]
-
-        @disnake.ui.button(label="ban", style=disnake.ButtonStyle.red, emoji="📛")
-        async def confirm(self, button: disnake.ui.Button, inter: disnake.CommandInteraction):
-            await inter.response.send_message("Бот был забанен")
-            self.value = True
-            self.stop
-
-        @disnake.ui.button(label="Cancel", style=disnake.ButtonStyle.green, emoji="❌")
-        async def cancel(self, button: disnake.ui.Button, inter: disnake.CommandInteraction):
-            await inter.response.send_message("Бот остался на сервере")
-            self.value = False
-            self.stop
+@bot.event
+async def on_message( message ):
+    msg = message.conetent.lower()
 
 
 @bot.event
@@ -92,19 +78,11 @@ async def ban(ctx, member: disnake.Member, *, reason="Нарушение пра�
     await ctx.message.delete.delete()
 
 
-@bot.command(name="ban")
-async def ban(ctx):
-    view = ban()
-
-    await ctx.send("Дать бан", view=view)
-    await view.wait()
-
-    if view.value is None:
-        await ctx.send("Вы не успели подтвердить бан участника")
-    elif view.value:
-        await ctx.send("Фух это фейк но тест")
-    else:
-        await ctx.send("Не получилось забанить")
+@bot.command( pass_context = True)
+async def clear(ctx, amount = 100):
+    await ctx.channel.purge(limit = amount)
 
 
-bot.run("YOU TOKEN")
+token = open( 'token.txt', 'r' ).readline()
+
+bot.run(token)
